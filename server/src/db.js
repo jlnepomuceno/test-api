@@ -35,6 +35,17 @@ consult_db.oneByUsername = (username) => {
     })
 }
 
+consult_db.checkIfExists = (username) => {
+    return new Promise((resolve, reject) => {
+        pool.query("SELECT id, username, name FROM user_accounts WHERE username = ?", [username], (err, res) => {
+            if (err) {
+                return reject(err)
+            }
+            return resolve(res[0]);
+        })
+    })
+}
+
 consult_db.createUser = ({ username, name, password }) => {
     return new Promise((resolve, reject) => {
         const set = {
@@ -46,7 +57,6 @@ consult_db.createUser = ({ username, name, password }) => {
             values: [username, name, password]
         }
         const dataSet = password === "" ? set : set2
-        console.log("dataSet", dataSet);
         pool.query(dataSet.query, dataSet.values, (err, res) => {
             if (err) {
                 return reject(err)
