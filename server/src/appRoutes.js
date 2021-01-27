@@ -36,10 +36,10 @@ router.get('/users/:username', async (req, res, next) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const data = req.body;    
+    const data = req.body;
     if ("User" in req.cookies) {
         // User is logged in 
-        const user = await db.oneByUsername(data.id);
+        const user = await db.checkIfExists(data.id);
         if (user !== "undefined") {
             res.json(user); // TODO RETURN USER PLUS OTHER NEEDED INFO
         }
@@ -47,7 +47,7 @@ router.post('/login', async (req, res) => {
         // Will create cookie, but first, check if username exists
         // Check if username exists
         let return_data = null;
-        const user = await db.oneByUsername(data.id);
+        const user = await db.checkIfExists(data.id);
 
         let user_id = null;
         if (user !== undefined) {
@@ -60,7 +60,7 @@ router.post('/login', async (req, res) => {
                 password:""
             });
             user_id = create_res.id;
-            return_data = create_res;  // TODO RETURN USER PLUS OTHER NEEDED INFO
+            return_data = user_id;  // TODO RETURN USER PLUS OTHER NEEDED INFO
         }
 
         res.status(202).cookie('User', user_id,{
@@ -68,7 +68,7 @@ router.post('/login', async (req, res) => {
             path: '/',
             expires: new Date(new Date().getTime() + data.expiresIn * 1000),
             httpOnly: true
-        }).json(return_data.insertId); // TODO add here anything you want to return with the login
+        }).json(return_data); // TODO add here anything you want to return with the login
     }
   } catch (e) {
       console.error(e);
