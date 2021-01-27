@@ -46,7 +46,6 @@ consult_db.createUser = ({ username, name, password }) => {
             values: [username, name, password]
         }
         const dataSet = password === "" ? set : set2
-        console.log("dataSet", dataSet);
         pool.query(dataSet.query, dataSet.values, (err, res) => {
             if (err) {
                 return reject(err)
